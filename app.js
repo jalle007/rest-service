@@ -33,7 +33,7 @@ var testPassword = "123456";
 var testuserid = "my_userid";
 
 app.get('/', function (req,res) {
-  res.send("BCG REST service");
+  res.send("BCG REST service by Jalle");
   });
 
 app.post('/sessions/new/email/:email/password/:password', function (req, res) {
