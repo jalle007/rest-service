@@ -1,0 +1,20 @@
+{
+  "name": "rest-service",
+  "version": "0.0.0",
+  "description": "service",
+  "main": "app.js",
+  "author": {
+    "name": "jalle"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "3.4.4",
+    "jade": "*",
+    "multer": "^1.2.0",
+    "multiparty": "^4.1.2",
+    "stylus": "*"
+  }
+}
