@@ -38,7 +38,7 @@ var testPassword = "123456";
 var testuserid = "my_userid";
 
 app.get('/', function (req,res) {
-  res.send("BCG REST service by Jalle");
+  res.send("BCG REST service v2 by Jalle");
   });
 var type = upload.single('image');
 
