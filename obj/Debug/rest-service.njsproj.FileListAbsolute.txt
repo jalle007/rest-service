@@ -1,1 +1,2 @@
 d:\Downloads\android\test1\rest-service\rest-service\bin\Microsoft.NodejsTools.WebRole.dll
+D:\Downloads\android\test1\rest-service\rest-service\obj\Debug\rest-service.njsprojResolveAssemblyReference.cache

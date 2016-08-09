@@ -3,12 +3,13 @@ var http = require('http');
 var path = require('path');
 var app = express();
 var util = require('util');
+var multiparty = require('multiparty');
 
 var multer = require('multer');
-var upload = multer({ dest: 'uploads/' });
+var upload = multer({ dest: './uploads/' });
+app.use(multer({ dest: './uploads/' }));
 var fs = require('fs');
-var multipart = require('multiparty');
-
+ 
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -24,6 +25,10 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/uploads', express.static(__dirname + '/uploads'));
+app.use('/uploads', express.directory(__dirname + '/uploadsimages'));
+
 // development only test
 if ('development' == app.get('env')) {
     app.use(express.errorHandler());
@@ -35,22 +40,38 @@ var testuserid = "my_userid";
 app.get('/', function (req,res) {
   res.send("BCG REST service by Jalle");
   });
+var type = upload.single('image');
 
+//not working
 app.post('/sessions/new/email/:email/password/:password', function (req, res) {
   var email = req.params.email;
   var password = req.params.password;
+  var body = req.body;
+
   if (email == testEmail && password == testPassword) {
     res.json({ userid: "my_userid", token: "token" });
   } else {
     res.json({ userid: "", token: "" });
   }
-  
 });
 
+//working
+app.post('/sessions/new', function (req, res) {
+  var email = req.body.email;
+  var password = req.body.password;
+  if (email == testEmail && password == testPassword) {
+    res.json({ userid: "my_userid", token: "token" });
+  } else {
+    res.json({ userid: "", token: "" });
+  }
+});
+
+
+//working
 app.get('/users/:userid', function (req, res) {
   var userid = req.params.userid;
   if (userid == testuserid ) {
-    res.json({ email: testEmail, avatar_url: "avatar_url" });
+    res.json({ email: testEmail, avatar_url: "/uploads/pic.jpg" });
   } else {
     res.json({ email: "", avatar_url: "" });
   }
@@ -58,13 +79,19 @@ app.get('/users/:userid', function (req, res) {
 
 
 //upload avatar image
-var type = upload.single('image');
+app.post('/users/avatar', type,
+  function (req, res) {
+    var userid = req.body.userid;
 
-app.post('/users/:userid/avatar/:avatar', type,
-  function(req, res) {
-    var userid = req.params.userid;
+    if (userid == testuserid || true) {
+      var body = '';
+      var filePath = __dirname + '/uploads/pic.jpg';
+     fs.appendFile(filePath, req.body.image, function () {
+       res.end('file uploaded');
+     });
+       
 
-    if (userid == testuserid) {
+     return;
       var tmp_path = req.file.path;
       /** The original name of the uploaded file      stored in the variable "originalname". **/
       var target_path = 'uploads/' + req.file.originalname;
@@ -75,7 +102,30 @@ app.post('/users/:userid/avatar/:avatar', type,
       src.on('end', function () { res.end('file uploaded'); });
       src.on('error', function (err) { res.end('error'); });
 
-    //  res.json({ avatar_url: "avatar_url" });
+      //  res.json({ avatar_url: "avatar_url" });
+    } else {
+      res.json({ avatar_url: "" });
+    }
+  });
+
+
+//upload avatar image
+app.post('/users/:userid/avatar/:avatar', type,
+  function(req, res) {
+     
+    var userid = req.params.userid;
+    if (userid == testuserid || true) {
+      var tmp_path = req.file.path;
+      /** The original name of the uploaded file      stored in the variable "originalname". **/
+      var target_path = 'uploads/' + req.file.originalname;
+      /** A better way to copy the uploaded file. **/
+      var src = fs.createReadStream(tmp_path);
+      var dest = fs.createWriteStream(target_path);
+      src.pipe(dest);
+      src.on('end', function () { res.end('file uploaded'); });
+      src.on('error', function (err) { res.end('error'); });
+
+      res.json({ avatar_url: target_path });
     } else {
       res.json({ avatar_url: "" });
     }
