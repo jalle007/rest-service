@@ -71,43 +71,11 @@ app.post('/sessions/new', function (req, res) {
 app.get('/users/:userid', function (req, res) {
   var userid = req.params.userid;
   if (userid == testuserid ) {
-    res.json({ email: testEmail, avatar_url: "/uploads/pic.jpg" });
+    res.json({ email: testEmail, avatar_url: "uploads/pic.jpg" });
   } else {
     res.json({ email: "", avatar_url: "" });
   }
 });
-
-
-//upload avatar image
-app.post('/users/avatar', type,
-  function (req, res) {
-    var userid = req.body.userid;
-
-    if (userid == testuserid || true) {
-      var body = '';
-      var filePath = __dirname + '/uploads/pic.jpg';
-     fs.appendFile(filePath, req.body.image, function () {
-       res.end('file uploaded');
-     });
-       
-
-     return;
-      var tmp_path = req.file.path;
-      /** The original name of the uploaded file      stored in the variable "originalname". **/
-      var target_path = 'uploads/' + req.file.originalname;
-      /** A better way to copy the uploaded file. **/
-      var src = fs.createReadStream(tmp_path);
-      var dest = fs.createWriteStream(target_path);
-      src.pipe(dest);
-      src.on('end', function () { res.end('file uploaded'); });
-      src.on('error', function (err) { res.end('error'); });
-
-      //  res.json({ avatar_url: "avatar_url" });
-    } else {
-      res.json({ avatar_url: "" });
-    }
-  });
-
 
 //upload avatar image
 app.post('/users/:userid/avatar/:avatar', type,
@@ -132,17 +100,12 @@ app.post('/users/:userid/avatar/:avatar', type,
   });
 
 
-
-
-
-//File upload
+//File upload test
 app.get('/upload', function (req, res) {
   res.render('upload', {
     title: 'Upload Images'
   });
 });
-
-
 app.post('/upload', type, function (req, res, next) {
   /** When using the "single"      data come in "req.file" regardless of the attribute "name". **/
   var tmp_path = req.file.path;
@@ -154,18 +117,6 @@ app.post('/upload', type, function (req, res, next) {
   src.pipe(dest);
   src.on('end', function () { res.end('file uploaded'); });
   src.on('error', function (err) { res.end('error'); });
-  
-  //console.log('file info: ', req.file.image);
-  ////split the url into an array and then get the last chunk and render it out in the send req.
-  //var pathArray = req.file.image.path.split('/');
-  //res.send(util.format(' Task Complete \n uploaded %s (%d Kb) to %s as %s'
-  //  , req.file.image.name
-  //  , req.file.image.size / 1024 | 0
-  //  , req.file.image.path
-  //  , req.body.title
-  //  , req.file.image
-  //  , '<img src="uploads/' + pathArray[(pathArray.length - 1)] + '">'
-  //));
 });
 
 
